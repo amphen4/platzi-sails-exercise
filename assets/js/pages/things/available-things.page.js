@@ -7,7 +7,7 @@ parasails.registerPage('available-things', {
 
     // The "virtual" portion of the URL which is managed by this page script.
     virtualPageSlug: '',
-
+    uploadThingModalOpen: false,
     // Form data
     uploadFormData: {
       photo: undefined,

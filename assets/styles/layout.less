@@ -8,52 +8,90 @@ html, body {
   margin: 0;
 }
 
-[purpose='page-wrap'] {
+#page-wrap {
   height: 100%;
   /* lesshint-disable */height: auto !important;/* lesshint-enable */
   // ^^The above is to disable "importantRule" and "duplicateProperty" rules.
   min-height: 100%;
   position: relative;
   padding-bottom: @footer-height;
+
+  header {
+    a:not(.btn) {
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      &.nav-item {
+        padding-left: 0px;
+        padding-right: 0px;
+        margin-right: 20px;
+        &:hover {
+          border-bottom-color: @border-lt-gray;
+        }
+        &.current {
+          border-bottom-color: @accent-teal;
+        }
+        &:last-child {
+          margin-right: 0px;
+        }
+      }
+      &.dropdown-toggle {
+        &:hover {
+          color: @accent-teal!important;
+        }
+      }
+    }
+    .dropdown-menu.account-menu {
+      left: auto;
+      right: 0px;
+    }
+  }
+
+  // App-wide styles for our ajax buttons
+  .ajax-button {
+    .ajax-button();
+  }
 }
 
-[purpose='page-footer'] {
+#page-footer {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   height: @footer-height;
   width: 100%;
   position: absolute;
   left: 0px;
   bottom: 0px;
-}
-
-body.detected-mobile {
-  // Above and beyond the media queries below, this selector (which relies on
-  // `parasails` automatically attaching this class, if appropriate) contains
-  // styles intended to be activated specifically when loaded from a recognized
-  // mobile device, regardless of viewport dimensions.  This includes tablet
-  // devices (like the iPad) as well as handset devices (like the iPhone).
-  // …
+  .xs-only {
+    display: none;
+  }
 }
 
 @media (max-width: 800px) {
-  [purpose='page-wrap'] {
+  #page-wrap {
     padding-bottom: 75px;
-    [purpose='page-footer'] {
+    #page-footer {
       height: 75px;
-      [purpose='footer-copy'], [purpose='footer-nav'] {
+      .copy, .nav {
         width: 100%;
         display: block;
         text-align: center;
+        .nav-item {
+          display: inline-block;
+          a {
+            display: inline-block;
+          }
+        }
       }
     }
   }
 }
 
-@media (max-width: 575px) {
-  [purpose='page-wrap'] {
-    padding-bottom: 100px;
-    [purpose='page-footer'] {
-      height: 100px;
+@media (max-width: 450px) {
+  #page-wrap {
+    padding-bottom: 85px;
+    #page-footer {
+      height: 85px;
+      .xs-only {
+        display: block;
+      }
     }
   }
 }
