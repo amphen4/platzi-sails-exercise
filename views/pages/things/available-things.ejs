@@ -1,15 +1,21 @@
 <div id="available-things" v-cloak>
+<div class="container">
   <!--
     <h1>TODO: Implement this page.</h1>
     <p>(See also <em>assets/styles/pages/things/available-things.less</em>, <em>assets/js/pages/things/available-things.page.js</em>, and <em>api/controllers/things/view-available-things.js</em>.)</p>
   -->
-  <h1>Things</h1>
-  <p>View available items to borrow, or upload yout own things.</p>
+  <div class="page-header text-center">
+    <h1>Things</h1>
+    <h2>View available items to borrow, or upload your own things.</h2>
+    <div class="header-buttons">
+      <button class="btn btn-outline-primary" @click="clickAddButton()">Add an item</button>
+    </div>
+  </div>
 
   <ul>
     <li v-for="thing of things" @click="clickDeleteThing(thing.id)">{{thing.label}}</li>
   </ul>
-
+</div>
   <modal v-if="confirmDeleteThingModalOpen && selectedThing" v-cloak key="delete" @close="closeDeleteThingModal()">
     <div class="modal-header">
       <h5 class="modal-title">Remove this item?</h5>
@@ -27,6 +33,51 @@
       <div class="modal-footer">
         <button data-dismiss="modal" class="btn btn-outline-secondary mr-1">Nevermind</button>
         <ajax-button type="submit" :syncing="syncing" class="btn btn-danger ml-1">Remove</ajax-button>
+      </div>
+    </ajax-form>
+  </modal>
+  <% /* "Upload thing" modal */ %>
+  <modal v-if="virtualPageSlug === 'new'" v-cloak key="new" @close="closeUploadThingModal()">
+    <div class="modal-header">
+      <h5 class="modal-title">Upload a new thing</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span>&times;</span>
+      </button>
+    </div>
+    <ajax-form action="uploadThing" :syncing.sync="syncing" :cloud-error.sync="cloudError" :handle-parsing="handleParsingUploadThingForm" @submitted="submittedUploadThingForm($event)">
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Add a photo:</label>
+          <div class="photo-uploader" :class="!uploadFormData.previewImageSrc ? 'empty' :  ''">
+            <div class="photo-upload-field row d-flex align-items-center" :class="!uploadFormData.previewImageSrc ? 'justify-content-center' :  'justify-content-start'" >
+              <div class="photo-preview col">
+                <div class="image-wrapper" :class="!uploadFormData.previewImageSrc ? 'd-flex align-items-center justify-content-center' : ''">
+                  <img v-if="uploadFormData.previewImageSrc" alt="A preview of the selected item" :src="uploadFormData.previewImageSrc"/>
+                  <span v-else class="placeholder-icon fa fa-picture-o"></span>
+                </div>
+              </div>
+              <div class="col d-flex-column justify-content-center">
+                <span class="file-upload-button btn btn-sm" :class="[formErrors.photo ? 'btn-outline-danger' : !uploadFormData.previewImageSrc ? 'btn-outline-success' : 'btn-outline-secondary mr-3']">
+                  <span class="button-text" v-if="!uploadFormData.previewImageSrc">Select image</span>
+                  <span class="button-text" v-else>Change image</span>
+                  <input type="file" :disabled="syncing" accept="image/*" class="file-input" @change="changeFileInput($event.target.files)"/>
+                </span>
+                <p class="image-advice text-muted" v-if="!formErrors.photo"><strong>Tip</strong>: Make sure the item is front and center in the photo, so people know exactly what you're offering to share.</p>
+                <p class="image-advice text-danger" v-if="formErrors.photo">A photo is required in order to add a new item.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group" v-if="uploadFormData.previewImageSrc">
+          <label>What is it?</label>
+          <input class="form-control" type="text" v-model="uploadFormData.label" placeholder="Waffle Iron">
+        </div>
+        <p class="text-danger" v-if="cloudError === 'tooBig'"><small>That file is too big. Please choose a junkier picture.</small></p>
+        <p class="text-danger" v-else-if="cloudError"><small>An error occured while processing your request. Please check your information and try again, or <a href="/support">contact support</a> if the error persists.</small></p>
+      </div>
+      <div class="modal-footer flex-row-reverse justify-content-start">
+        <ajax-button type="submit" :syncing="syncing" class="btn btn-primary ml-1">Share item</ajax-button>
+        <button data-dismiss="modal" class="btn btn-outline-primary mr-1">Cancel</button>
       </div>
     </ajax-form>
   </modal>

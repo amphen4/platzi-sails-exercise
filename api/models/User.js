@@ -42,7 +42,6 @@ email status until they click the link in the confirmation email.`
 
     password: {
       type: 'string',
-      required: true,
       description: 'Securely hashed representation of the user\'s login password.',
       protect: true,
       example: '2$28a8eabna301089103-13948134nad'
@@ -166,7 +165,15 @@ without necessarily having a billing card.`
     // n/a
     friends:  {
       collection: 'User'
-    }
+    },
+    inboundFriendRequests: {
+      collection: 'User',
+      via: 'outboundFriendRequests'
+    },
+    outboundFriendRequests: {
+      collection: 'User',
+      via: 'inboundFriendRequests'
+    },
   },
 
 
